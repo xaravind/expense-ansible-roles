@@ -1,0 +1,6 @@
+login_user: root
+login_password: ExpenseApp@1
+login_host: db.daws78s.online
+DB_HOST: db.daws78s.online
+component: frontend
+app_location: /app
