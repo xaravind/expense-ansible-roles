@@ -1,11 +1,12 @@
+
 - name: disable default nodejs
   ansible.builtin.command: dnf module disable nodejs -y
 
-- name: enable  nodejs:20
+- name: enable nodejs:20
   ansible.builtin.command: dnf module enable nodejs:20 -y
 
 - name: install nodejs
-  ansible.builtin.dnf:
+  ansible.builtin.dnf: # only works for Redhat family
     name: "{{ item }}"
     state: installed
   loop:
@@ -17,19 +18,23 @@
     name: expense
 
 - name: run app pre-requisites
+  tags:
+  - deployment
   ansible.builtin.import_role:
     name: common
     tasks_from: app-pre-req
 
 - name: install npm dependencies
+  tags:
+  - deployment
   ansible.builtin.command: npm install
   args:
     chdir: /app
 
-- name: Copying service file
+- name: copy backend service
   ansible.builtin.template:
     src: backend.service.j2
-    dest: /etc/systemd/system/backend.service     
+    dest: /etc/systemd/system/backend.service
 
 - name: install python mysql dependencies
   ansible.builtin.pip: 
@@ -52,7 +57,9 @@
     daemon_reload: true
 
 - name: start and enable backend service
+  tags: 
+  - deployment
   ansible.builtin.service:
     name: backend
-    state: started
+    state: restarted
     enabled: yes
