@@ -12,16 +12,14 @@
   - nodejs
   - mysql
 
+- name: create expense user
+  ansible.builtin.user:
+    name: expense
+
 - name: run app pre-requisites
   ansible.builtin.import_role:
     name: common
     tasks_from: app-pre-req
-
-- name: extracting zip file
-  ansible.builtin.unarchive:
-    src: /tmp/backend.zip
-    dest: /app
-    remote_src: yes 
 
 - name: install npm dependencies
   ansible.builtin.command: npm install
